@@ -1,5 +1,6 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class Main {
@@ -23,7 +24,7 @@ public class Main {
     }
 
     static double execute(char opCode, double leftVal, double rightVal) {
-        double result;
+        double result = 0.0d;
         switch(opCode) {
             case 'a':
                 result = leftVal + rightVal;
@@ -43,17 +44,28 @@ public class Main {
                 break;
             default:
                 System.out.println("Invalid opCode : " + opCode);
-                System.out.println("a : addition\ns : subtraction\nm : multiplicaiton\nd : division");
-                result = 0.0d;
                 System.out.println("Exiting the program...");
-                break;
+                help();
         }
         return result;
     }
 
     private static void displayResult(char opCode, double leftVal, double rightVal, double result) {
-        String output = leftVal + " " + opCode + " " + rightVal + " " + " = " + result;
+        char symbol = symbolFromOpCode(opCode);
+        DecimalFormat df = new DecimalFormat("#.###");
+        String output = leftVal + " " + symbol + " " + rightVal + " " + " = " + df.format(result);
         System.out.println(output);
+    }
+
+    private static char symbolFromOpCode(char opCode) {
+        char[] opCodes = {'a', 's', 'm', 'd'};
+        char[] symbols = {'+', '-', '*', '/'};
+        char symbol = ' ';
+        for(int i=0; i<opCodes.length; i++){
+            if(opCode == opCodes[i])
+                symbol = symbols[i];
+        }
+        return symbol;
     }
 
     private static void handleCommandLine(String[] args) {
@@ -87,14 +99,17 @@ public class Main {
         char opCode = ' ';
         if (operation.length() == 1) {
             opCode = operation.charAt(0);
-        } else {
-            System.out.println("Invalid opCode.\nThe available opCodes are 'a', 's', 'm', 'd'");
-            System.exit(0);
-        }
+        } else
+            help();
         return opCode;
     }
 
     static double operandToDouble(String operand) {
         return Double.parseDouble((operand));
+    }
+
+    private static void help() {
+        System.out.println("The available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplicaiton\n'd' : division\n");
+        System.exit(0);
     }
 }
