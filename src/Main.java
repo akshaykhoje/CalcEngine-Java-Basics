@@ -13,9 +13,8 @@ public class Main {
             }
             for (double currentResult : results)
                     System.out.println(currentResult);
-        } else {
-            System.out.println("Baadme karenge....");
-            System.exit(0);
+        }  else if (args.length == 3) {
+            handleCommandLine(args);
         }
     }
 
@@ -32,14 +31,27 @@ public class Main {
                 result = leftVal * rightVal;
                 break;
             case 'd':
+                if (rightVal == 0) {
+                    System.out.println("Invalid Input. Cannot divide by 0.\nExiting");
+                    System.exit(0);
+                }
                 result = leftVal / rightVal;
                 break;
             default:
                 System.out.println("Invalid opCode : " + opCode);
+                System.out.println("a : addition\ns : subtraction\nm : multiplicaiton\nd : division");
                 result = 0.0d;
                 System.out.println("Exiting the program...");
                 break;
         }
         return result;
+    }
+
+    private static void handleCommandLine(String[] args) {
+        char opCode = args[0].charAt(0);
+        double leftVal = Double.parseDouble(args[1]);
+        double rightVal = Double.parseDouble(args[2]);
+        double result = execute(opCode, leftVal, rightVal);
+        System.out.println(result);
     }
 }
