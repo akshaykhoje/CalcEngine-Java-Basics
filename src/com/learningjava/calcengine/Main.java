@@ -8,6 +8,8 @@ public class Main {
     public static void main(String[] args) {
         if(args.length == 0) {
             performCalculations();
+        } else if (args.length == 1 && args[0].equals("--help") || args[0].equals("-h")) {
+            help();
         } else if (args.length == 1 && args[0].equals("interactive")){
             executeInteractively();
         } else if (args.length == 3) {
@@ -23,9 +25,10 @@ public class Main {
         equations[2] = create(100.0d, 6.0d, 's');
         equations[3] = create(83.0d, 88.0d, 'm');
 
+        System.out.println("\nHardcoded inputs...");
         for (MathEquation equation : equations) {
             equation.execute();
-            System.out.println("Result : " + equation.result);
+            displayResult(equation.opCode, equation.leftVal, equation.rightVal, equation.result);
         }
     }
 
@@ -146,6 +149,7 @@ public class Main {
 
     public static void help() {
         System.out.println("\n\nHELP...\nThe available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplication\n'd' : division\n");
+        System.out.println("You can run the program in 3 modes :\n1) Without args - 'make'\n2) With args - 'make ARGS=\"opCode num1 num2\"'\n3) Interactive mode - 'make ARGS=\"interactive\"'");
         System.exit(0);
     }
 }
