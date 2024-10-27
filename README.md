@@ -2,6 +2,8 @@
 
 First learning exercise in Java
 
+---
+
 ## Topics covered/revised
 
 - Functional paradigm
@@ -9,6 +11,8 @@ First learning exercise in Java
 - Makefile
 - Error handling
 - Some In-built Java classes
+
+---
 
 ## Working with the program
 
@@ -31,3 +35,5 @@ $ make ARGS="-h"
 ```markdown
 $ make clean
 ```
+
+*Happy Learning :)*
