@@ -1,27 +1,43 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+package com.learningjava.calcengine;
+
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        double[] leftVals = {100.0d, 25.0d, 225.0d, 11.0d};
-        double[] rightVals = {50.0d, 92.0d, 17.0d, 3.0d};
-        char[] opCodes = {'d', 'a', 's', 'm'};
-        double[] results = new double[leftVals.length];
-
         if(args.length == 0) {
-            for(int i=0; i<leftVals.length; i++) {
-                results[i] = execute(opCodes[i], leftVals[i], rightVals[i]);
-            }
-            for (double currentResult : results)
-                    System.out.println(currentResult);
+            performCalculations();
         } else if (args.length == 1 && args[0].equals("interactive")){
             executeInteractively();
         } else if (args.length == 3) {
             handleCommandLine(args);
         }
     }
+
+
+    private static void performCalculations() {
+        MathEquation[] equations = new MathEquation[4];   // an array of references to classes of type MathEquation. Classes yet to be initialized
+        equations[0] = create(100.0d, 25.0d, 'd');
+        equations[1] = create(26.0d, 55.0d, 'a');
+        equations[2] = create(100.0d, 6.0d, 's');
+        equations[3] = create(83.0d, 88.0d, 'm');
+
+        for (MathEquation equation : equations) {
+            equation.execute();
+            System.out.println("Result : " + equation.result);
+        }
+    }
+
+
+    // creates a new instance of the MathEquation class
+    private static MathEquation create(double leftVal, double rightVal, char opCode) {
+        MathEquation equation = new MathEquation();
+        equation.setLeftVal(leftVal);
+        equation.setRightVal(rightVal);
+        equation.setOpCode(opCode);
+        return equation;
+    }
+
 
     static double execute(char opCode, double leftVal, double rightVal) {
         double result = 0.0d;
@@ -50,12 +66,14 @@ public class Main {
         return result;
     }
 
+
     private static void displayResult(char opCode, double leftVal, double rightVal, double result) {
         char symbol = symbolFromOpCode(opCode);
         DecimalFormat df = new DecimalFormat("#.###");
         String output = leftVal + " " + symbol + " " + rightVal + " " + " = " + df.format(result);
         System.out.println(output);
     }
+
 
     private static char symbolFromOpCode(char opCode) {
         char[] opCodes = {'a', 's', 'm', 'd'};
@@ -68,6 +86,7 @@ public class Main {
         return symbol;
     }
 
+
     private static void handleCommandLine(String[] args) {
         char opCode = args[0].charAt(0);
         double leftVal = Double.parseDouble(args[1]);
@@ -76,16 +95,24 @@ public class Main {
         System.out.println(result);
     }
 
-    private static void executeInteractively() {
-        System.out.println("Enter an operand followed by two numbers e.g. \"a 3 6\" to perform \"3 + 6\"");
+
+    static void executeInteractively() {
         Scanner scanner = new Scanner(System.in);
-        String userInput = scanner.nextLine();
-        String[] parts = userInput.split(" ");
-        if (parts.length != 3) {
-            System.out.println("Invalid input");
-        } else
-            performOperations(parts);
+        while (true) {
+            System.out.println("Enter an operand followed by two numbers e.g. \"a 3 6\" to perform \"3 + 6\" (or type 'exit' to quit)");
+            String userInput = scanner.nextLine();
+            if (userInput.equalsIgnoreCase("exit")) {
+                break;
+            }
+            String[] parts = userInput.split(" ");
+            if (parts.length != 3) {
+                System.out.println("Invalid input");
+            } else {
+                performOperations(parts);
+            }
+        }
     }
+
 
     private static void performOperations(String[] arr) {
         char opCode = opCodeFromString(arr[0]);
@@ -94,6 +121,7 @@ public class Main {
         double result = execute(opCode, leftVal, rightVal);
         displayResult(opCode, leftVal, rightVal, result);
     }
+
 
     static char opCodeFromString(String operation) {
         char opCode = ' ';
@@ -104,12 +132,20 @@ public class Main {
         return opCode;
     }
 
+
     static double operandToDouble(String operand) {
-        return Double.parseDouble((operand));
+        try {
+            return Double.parseDouble(operand);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format for: " + operand);
+            System.exit(0);
+            return 0; // Unreachable, but required for compilation.
+        }
     }
 
-    private static void help() {
-        System.out.println("The available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplicaiton\n'd' : division\n");
+
+    public static void help() {
+        System.out.println("The available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplication\n'd' : division\n");
         System.exit(0);
     }
 }
