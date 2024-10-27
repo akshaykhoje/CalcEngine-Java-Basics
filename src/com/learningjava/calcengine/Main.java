@@ -2,6 +2,7 @@ package com.learningjava.calcengine;
 
 import java.text.DecimalFormat;
 import java.util.Scanner;
+import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,13 +11,13 @@ public class Main {
         } else if (args.length == 1 && args[0].equals("interactive")){
             executeInteractively();
         } else if (args.length == 3) {
-            handleCommandLine(args);
+            performOperations(args);
         }
     }
 
 
     private static void performCalculations() {
-        MathEquation[] equations = new MathEquation[4];   // an array of references to classes of type MathEquation. Classes yet to be initialized
+        MathEquation[] equations = new MathEquation[4];   // an array of references to classes of type MathEquation. Objects yet to be created
         equations[0] = create(100.0d, 25.0d, 'd');
         equations[1] = create(26.0d, 55.0d, 'a');
         equations[2] = create(100.0d, 6.0d, 's');
@@ -87,15 +88,6 @@ public class Main {
     }
 
 
-    private static void handleCommandLine(String[] args) {
-        char opCode = args[0].charAt(0);
-        double leftVal = Double.parseDouble(args[1]);
-        double rightVal = Double.parseDouble(args[2]);
-        double result = execute(opCode, leftVal, rightVal);
-        System.out.println(result);
-    }
-
-
     static void executeInteractively() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -116,10 +108,18 @@ public class Main {
 
     private static void performOperations(String[] arr) {
         char opCode = opCodeFromString(arr[0]);
-        double leftVal = operandToDouble(arr[1]);
-        double rightVal = operandToDouble(arr[2]);
-        double result = execute(opCode, leftVal, rightVal);
-        displayResult(opCode, leftVal, rightVal, result);
+        Optional<Double> leftValOpt = operandToDouble(arr[1]);
+        Optional<Double> rightValOpt = operandToDouble(arr[2]);
+        if (leftValOpt.isPresent() && rightValOpt.isPresent()) {
+            double leftVal = leftValOpt.get();
+            double rightVal = rightValOpt.get();
+            double result = execute(opCode, leftVal, rightVal);
+            displayResult(opCode, leftVal, rightVal, result);
+        } else {
+            System.out.println("Operation could not be performed due to invalid inputs...\nTERMINATING");
+            help();
+        }
+
     }
 
 
@@ -133,19 +133,19 @@ public class Main {
     }
 
 
-    static double operandToDouble(String operand) {
+    static Optional<Double> operandToDouble(String operand) {
         try {
-            return Double.parseDouble(operand);
+            return Optional.of(Double.parseDouble(operand));
         } catch (NumberFormatException e) {
             System.out.println("Invalid number format for: " + operand);
             System.exit(0);
-            return 0; // Unreachable, but required for compilation.
+            return Optional.empty();
         }
     }
 
 
     public static void help() {
-        System.out.println("The available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplication\n'd' : division\n");
+        System.out.println("\n\nHELP...\nThe available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplication\n'd' : division\n");
         System.exit(0);
     }
 }
