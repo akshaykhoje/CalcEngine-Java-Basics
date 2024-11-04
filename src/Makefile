@@ -1,6 +1,8 @@
 SRC = com/learningjava/calcengine/Main.java com/learningjava/calcengine/MathEquation.java
 CLASS = com.learningjava.calcengine.Main
-OUTPUT = output
+
+# Determine the operating system
+UNAME_S := $(shell uname -s)
 
 # Default target
 all : compile run
@@ -15,4 +17,13 @@ run:
 
 clean:
 	@echo "Cleaning up..."
-	del /Q com\learningjava\calcengine\*.class
+	@if [ "$(UNAME_S)" = "Linux" ]; then \
+		rm -f com/learningjava/calcengine/*.class; \
+	elif [ "$(UNAME_S)" = "Darwin" ]; then \
+		rm -f com/learningjava/calcengine/*.class; \
+	elif [ "$(UNAME_S)" = "CYGWIN"* ] || [ "$(UNAME_S)" = "MINGW"* ]; then \
+		del /Q com\learningjava\calcengine\*.class; \
+	else \
+		echo "Unsupported OS: $(UNAME_S)"; \
+		exit 1; \
+	fi
