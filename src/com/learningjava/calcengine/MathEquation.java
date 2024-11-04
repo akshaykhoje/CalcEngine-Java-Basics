@@ -21,6 +21,9 @@ public class MathEquation {
             case 'd':
                 result = (rightVal != 0) ? leftVal / rightVal : 0.0d;
                 break;
+            case 'o':
+                result = (rightVal != 0) ? leftVal % rightVal : 0.0d;
+                break;
             default:
                 System.out.println("Invalid opCode : " + opCode);
                 result = 0.0d;

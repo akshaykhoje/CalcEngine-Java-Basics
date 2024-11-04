@@ -14,16 +14,19 @@ public class Main {
             executeInteractively();
         } else if (args.length == 3) {
             performOperations(args);
+        } else {
+            help();
         }
     }
 
 
     private static void performCalculations() {
-        MathEquation[] equations = new MathEquation[4];   // an array of references to classes of type MathEquation. Objects yet to be created
+        MathEquation[] equations = new MathEquation[5];   // an array of references to classes of type MathEquation. Objects yet to be created
         equations[0] = create(100.0d, 25.0d, 'd');
         equations[1] = create(26.0d, 55.0d, 'a');
         equations[2] = create(100.0d, 6.0d, 's');
         equations[3] = create(83.0d, 88.0d, 'm');
+        equations[4] = create(25.2d, 8.3d, 'o');
 
         System.out.println("\nHardcoded inputs...");
         for (MathEquation equation : equations) {
@@ -44,30 +47,26 @@ public class Main {
 
 
     static double execute(char opCode, double leftVal, double rightVal) {
-        double result = 0.0d;
         switch(opCode) {
             case 'a':
-                result = leftVal + rightVal;
-                break;
+                return leftVal + rightVal;
             case 's':
-                result = leftVal - rightVal;
-                break;
+                return leftVal - rightVal;
             case 'm':
-                result = leftVal * rightVal;
-                break;
+                return leftVal * rightVal;
+            case 'o':
+                if(rightVal == 0) {
+                    throw new ArithmeticException("Cannot modulo by 0.");
+                }
+                return leftVal % rightVal;
             case 'd':
                 if (rightVal == 0) {
-                    System.out.println("Invalid Input. Cannot divide by 0.\nExiting");
-                    System.exit(0);
+                    throw new ArithmeticException("Cannot divide by 0.");
                 }
-                result = leftVal / rightVal;
-                break;
+                return leftVal / rightVal;
             default:
-                System.out.println("Invalid opCode : " + opCode);
-                System.out.println("Exiting the program...");
-                help();
+                throw new IllegalArgumentException("Invalid opCode: " + opCode);
         }
-        return result;
     }
 
 
@@ -80,8 +79,8 @@ public class Main {
 
 
     private static char symbolFromOpCode(char opCode) {
-        char[] opCodes = {'a', 's', 'm', 'd'};
-        char[] symbols = {'+', '-', '*', '/'};
+        char[] opCodes = {'a', 's', 'm', 'd', 'o'};
+        char[] symbols = {'+', '-', '*', '/', '%'};
         char symbol = ' ';
         for(int i=0; i<opCodes.length; i++){
             if(opCode == opCodes[i])
@@ -101,10 +100,10 @@ public class Main {
             }
             String[] parts = userInput.split(" ");
             if (parts.length != 3) {
-                System.out.println("Invalid input");
-            } else {
-                performOperations(parts);
+                System.out.println("Invalid input. Please enter exactly 3 values...");
+                continue;
             }
+            performOperations(parts);
         }
     }
 
@@ -122,17 +121,14 @@ public class Main {
             System.out.println("Operation could not be performed due to invalid inputs...\nTERMINATING");
             help();
         }
-
     }
 
 
     static char opCodeFromString(String operation) {
-        char opCode = ' ';
         if (operation.length() == 1) {
-            opCode = operation.charAt(0);
+            return operation.charAt(0);
         } else
-            help();
-        return opCode;
+            throw new IllegalArgumentException("Invalid operation format. Expecting a single character opCode.");
     }
 
 
@@ -141,14 +137,13 @@ public class Main {
             return Optional.of(Double.parseDouble(operand));
         } catch (NumberFormatException e) {
             System.out.println("Invalid number format for: " + operand);
-            System.exit(0);
             return Optional.empty();
         }
     }
 
 
     public static void help() {
-        System.out.println("\n\nHELP...\nThe available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplication\n'd' : division\n");
+        System.out.println("\n\nHELP...\nThe available opCodes are :\n'a' : addition\n's' : subtraction\n'm' : multiplication\n'd' : division\n'o': modulo");
         System.out.println("You can run the program in 3 modes :\n1) Without args - 'make'\n2) With args - 'make ARGS=\"opCode num1 num2\"'\n3) Interactive mode - 'make ARGS=\"interactive\"'");
         System.exit(0);
     }
